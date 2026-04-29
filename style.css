@@ -1,0 +1,97 @@
+:root {
+    --bg: #020617;
+    --card: #0f172a;
+    --primary: #38bdf8;
+    --danger: #ef4444;
+    --success: #22c55e;
+    --text-main: #f1f5f9;
+    --text-dim: #64748b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
+
+body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container { width: 100%; max-width: 420px; text-align: center; }
+
+.card {
+    background: var(--card);
+    padding: 40px;
+    border-radius: 32px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.03);
+    width: 100%;
+}
+
+.hidden { display: none !important; }
+
+h2 { margin-bottom: 25px; font-weight: 800; font-size: 1.5rem; }
+
+.input-group { margin-bottom: 18px; text-align: right; }
+.input-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 6px; padding-right: 5px; }
+
+.input-field {
+    width: 100%;
+    background: #1e293b;
+    border: 1px solid #334155;
+    padding: 15px;
+    border-radius: 14px;
+    color: white;
+    outline: none;
+    text-align: center;
+}
+
+.time-row { display: flex; gap: 12px; }
+
+button {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-add { background: var(--primary); color: #020617; }
+.btn-start { background: #f8fafc; color: #020617; margin-top: 15px; }
+.btn-finish { background: var(--danger); color: white; margin-top: 15px; }
+.btn-ctrl { background: #334155; color: white; flex: 1; }
+
+.timer-display {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin: 20px 0;
+    font-family: monospace;
+}
+
+#motivationalModal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(2, 6, 23, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--card);
+    padding: 30px;
+    border-radius: 24px;
+    max-width: 350px;
+    border: 2px solid var(--primary);
+}
+
+.quote-text { font-size: 1.1rem; line-height: 1.6; color: var(--primary); margin-bottom: 20px; }
+
+.signature { margin-top: 25px; font-size: 0.85rem; color: var(--text-dim); }
+.signature a { color: var(--primary); text-decoration: none; font-weight: bold; }
