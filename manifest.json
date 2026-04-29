@@ -1,15 +1,29 @@
 {
   "short_name": "Focus",
-  "name": "Focus System | Harpy",
+  "name": "Focus System | By Harpy",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/2972/2972531.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
     }
   ],
-  "start_url": "/focus/index.html",
+  "start_url": "index.html",
   "background_color": "#020617",
   "display": "standalone",
-  "theme_color": "#020617"
+  "scope": "./",
+  "theme_color": "#020617",
+  "shortcuts": [
+    {
+      "name": "Start Focus",
+      "short_name": "Focus",
+      "url": "index.html",
+      "icons": [{ "src": "icon.png", "sizes": "192x192" }]
+    }
+  ]
 }
