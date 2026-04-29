@@ -424,11 +424,19 @@
         },
 
         closeModal() {
-            document.getElementById('motivationalModal').classList.add('hidden');
-            if(this.allDone) { location.reload(); }
-            else if(this.list.length > 0) { this.load(); }
-        }
-    };
+    document.getElementById('motivationalModal').classList.add('hidden');
+    if (this.allDone) {
+        // العودة للواجهة الرئيسية بدلاً من عمل Reload
+        this.list = []; // تصفير قائمة المهام
+        this.allDone = false;
+        document.getElementById('focusView').classList.add('hidden');
+        document.getElementById('setupView').classList.remove('hidden');
+        document.getElementById('countDisplay').classList.add('hidden');
+        document.getElementById('startBtn').classList.add('hidden');
+    } else {
+        this.load();
+    }
+}
 
     // إعادة طلب الحماية إذا خرج المستخدم وعاد للمتصفح
     document.addEventListener('visibilitychange', () => {
