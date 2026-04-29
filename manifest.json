@@ -1,0 +1,15 @@
+{
+  "short_name": "Focus",
+  "name": "Focus System | Harpy",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2972/2972531.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/focus/index.html",
+  "background_color": "#020617",
+  "display": "standalone",
+  "theme_color": "#020617"
+}
