@@ -109,11 +109,10 @@ const core = {
         try {
             if ('wakeLock' in navigator) {
                 this.wakeLock = await navigator.wakeLock.request('screen');
-                document.getElementById('wakeStatus').textContent = "🛡️ نظام حماية الشاشة نشط";
-                document.getElementById('wakeStatus').style.color = "var(--success)";
+                console.log("Wake Lock active"); 
             }
         } catch (err) {
-            document.getElementById('wakeStatus').textContent = "⚠️ الحماية التلقائية غير مدعومة";
+            console.log("Wake Lock failed");
         }
     },
 
