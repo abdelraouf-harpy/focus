@@ -5,193 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Focus System | By Harpy</title>
     
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#020617">
     
-    <style>
-        :root {
-            --bg: #020617;
-            --card: #0f172a;
-            --primary: #38bdf8;
-            --danger: #ef4444;
-            --success: #22c55e;
-            --text-main: #f1f5f9;
-            --text-dim: #64748b;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            overflow-x: hidden;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--card);
-            padding: 30px 20px;
-            border-radius: 28px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.05);
-            text-align: center;
-            width: 100%;
-        }
-
-        .hidden { display: none !important; }
-
-        h2 { margin-bottom: 25px; font-weight: 800; font-size: 1.5rem; color: var(--primary); }
-
-        .input-group { margin-bottom: 15px; text-align: right; }
-        .input-group label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 6px; padding-right: 5px; }
-        
-        .input-field {
-            width: 100%;
-            background: #1e293b;
-            border: 2px solid #334155;
-            padding: 15px;
-            border-radius: 14px;
-            color: white;
-            outline: none;
-            font-size: 1rem;
-            text-align: center;
-            transition: 0.3s;
-        }
-        .input-field:focus { border-color: var(--primary); }
-
-        .time-row { display: flex; gap: 10px; }
-
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            border: none;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-add { background: var(--primary); color: #020617; }
-        .btn-start { background: #f8fafc; color: #020617; margin-top: 15px; }
-        .btn-finish { background: var(--danger); color: white; margin-top: 15px; }
-        .btn-ctrl { background: #334155; color: white; flex: 1; }
-
-        /* تعديل التايمر ليكون متجاوباً تماماً ولا يخرج عن الإطار */
-        .timer-display {
-            font-size: 18vw; /* حجم نسبي لعرض الشاشة */
-            max-font-size: 80px;
-            font-weight: 800;
-            margin: 20px 0;
-            color: var(--text-main);
-            font-family: monospace;
-            line-height: 1;
-            display: block;
-            width: 100%;
-            text-align: center;
-        }
-        @media (min-width: 400px) {
-            .timer-display { font-size: 4.5rem; }
-        }
-
-        .next-task-box {
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            text-align: center;
-        }
-
-        #motivationalModal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 6, 23, 0.98);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: var(--card);
-            padding: 30px;
-            border-radius: 24px;
-            max-width: 350px;
-            text-align: center;
-            border: 1px solid var(--primary);
-        }
-
-        .quote-text { font-size: 1.1rem; line-height: 1.6; margin: 20px 0; color: var(--text-main); font-weight: 600; }
-
-        .signature { margin-top: 20px; text-align: center; font-size: 0.85rem; color: var(--text-dim); }
-        .signature a { color: var(--primary); text-decoration: none; font-weight: 700; }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
+    <!-- واجهة الإعداد -->
     <div id="setupView" class="card">
         <h2>إعداد المهمة</h2>
         <div class="input-group">
             <label>اسم المهمة</label>
-            <!-- تم تصفير الخانة تماماً -->
-            <input type="text" id="tName" class="input-field" value="" placeholder="ادخل اسم المهمة هنا">
+            <input type="text" id="tName" class="input-field" autocomplete="off">
         </div>
         <div class="time-row">
             <div class="input-group" style="flex:1">
                 <label>ساعات</label>
-                <!-- تم تصفير خانة الساعة -->
-                <input type="number" id="tH" class="input-field" value="" placeholder="0">
+                <input type="number" id="tH" class="input-field" min="0">
             </div>
             <div class="input-group" style="flex:1">
                 <label>دقائق</label>
-                <!-- تم تصفير خانة الدقيقة -->
-                <input type="number" id="tM" class="input-field" value="" placeholder="0">
+                <input type="number" id="tM" class="input-field" min="0" max="59">
             </div>
         </div>
         <button class="btn-add" onclick="core.add()">إضافة للقائمة</button>
-        
-        <div id="countDisplay" class="hidden" style="margin-top:15px; color:var(--primary); font-weight:bold;">
-            عدد المهام المضافة: <span id="taskCount">0</span>
-        </div>
+        <div id="countDisplay" class="task-counter hidden">عدد المهام المضافة حتى الآن: 0</div>
         <button id="startBtn" class="btn-start hidden" onclick="core.begin()">بدء تنفيذ المهام</button>
     </div>
 
+    <!-- واجهة التركيز -->
     <div id="focusView" class="card hidden">
-        <div id="activeTask" style="color:var(--primary); font-weight:800; font-size: 1.3rem;">-</div>
-        <!-- التايمر المعدل للموبايل -->
+        <div id="activeTask" style="color:var(--primary); font-weight:700; font-size: 1.2rem;">-</div>
         <div class="timer-display" id="disp">00:00:00</div>
-        
-        <div style="display:flex; gap:12px; margin-bottom: 15px;">
+        <div style="display:flex; gap:10px;">
             <button id="pBtn" class="btn-ctrl" onclick="core.toggle()">إيقاف مؤقت</button>
             <button class="btn-ctrl" onclick="core.reset()">إعادة</button>
         </div>
         <button class="btn-finish" onclick="core.finishOne()">إنهاء المهمة الحالية</button>
+        <div id="wakeStatus" class="status-badge">🛡️ نظام الحماية نشط</div>
         
-        <div class="next-task-box">
-            <span style="font-size: 0.8rem; color: var(--text-dim);">المهمة التالية:</span>
-            <span id="nextTaskName" style="color:var(--primary); font-weight:600; display:block;">-</span>
+        <div id="nextTaskContainer" class="next-task-box">
+            المهمة التالية:
+            <span id="nextTaskName">-</span>
         </div>
     </div>
 
+    <!-- مودال الجمل التحفيزية -->
     <div id="motivationalModal" class="hidden">
         <div class="modal-content">
-            <div style="font-size: 3rem;">🌟</div>
-            <div id="quoteArea" class="quote-text"></div>
-            <button class="btn-add" onclick="core.closeModal()" style="width:100%">استمرار</button>
+            <div id="modalEmoji" style="font-size: 2.5rem; margin-bottom: 10px;">🌟</div>
+            <div id="quoteArea" class="quote-text">أنت بطل!</div>
+            <button id="modalBtn" class="btn-add" onclick="core.closeModal()">استمرار</button>
         </div>
     </div>
 
@@ -199,6 +67,5 @@
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
