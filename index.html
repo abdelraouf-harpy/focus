@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Focus System | By Harpy</title>
     
+    <!-- إعدادات الـ Web App للموبايل -->
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#020617">
     
+    <!-- الخطوط والتنسيق -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -20,16 +23,16 @@
         <h2>إعداد المهمة</h2>
         <div class="input-group">
             <label>اسم المهمة</label>
-            <input type="text" id="tName" class="input-field" autocomplete="off">
+            <input type="text" id="tName" class="input-field" placeholder="مثلاً: مراجعة الكود" autocomplete="off">
         </div>
         <div class="time-row">
             <div class="input-group" style="flex:1">
                 <label>ساعات</label>
-                <input type="number" id="tH" class="input-field" min="0">
+                <input type="number" id="tH" class="input-field" min="0" placeholder="0">
             </div>
             <div class="input-group" style="flex:1">
                 <label>دقائق</label>
-                <input type="number" id="tM" class="input-field" min="0" max="59">
+                <input type="number" id="tM" class="input-field" min="0" max="59" placeholder="0">
             </div>
         </div>
         <button class="btn-add" onclick="core.add()">إضافة للقائمة</button>
@@ -66,6 +69,7 @@
     <div class="signature">Developed by <a href="https://www.facebook.com/share/1epCcKiKJo/" target="_blank">Harpy</a></div>
 </div>
 
+<!-- استدعاء البرمجة في نهاية الملف لضمان تحميل العناصر أولاً -->
 <script src="script.js"></script>
 </body>
 </html>
