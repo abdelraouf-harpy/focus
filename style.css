@@ -6,6 +6,8 @@
     --success: #22c55e;
     --text-main: #f1f5f9;
     --text-dim: #64748b;
+    /* إضافة متغير للوهج */
+    --glow-color: rgba(56, 189, 248, 0.4);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -26,6 +28,29 @@ body {
     max-width: 420px;
     display: flex;
     flex-direction: column;
+}
+
+/* تنسيق منطقة الاسم المضيء فوق الإطار */
+.user-glow-container {
+    text-align: center;
+    margin-bottom: 20px;
+    animation: fadeInGlow 1s ease-in-out;
+}
+
+#userDisplayName {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--primary);
+    text-shadow: 0 0 10px var(--glow-color), 
+                 0 0 20px var(--glow-color);
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#userDisplayName:hover {
+    text-shadow: 0 0 15px var(--primary), 
+                 0 0 30px var(--primary);
 }
 
 .card {
@@ -75,7 +100,7 @@ button {
 .btn-ctrl { background: #334155; color: white; flex: 1; }
 
 .timer-display {
-    font-size: 16vw; /* حجم متجاوب */
+    font-size: 16vw;
     font-weight: 800;
     margin: 20px 0;
     color: var(--text-main);
@@ -119,4 +144,18 @@ button {
 .next-task-box span { color: var(--primary); font-weight: 600; display: block; }
 
 .task-counter { margin-top: 15px; font-size: 0.85rem; color: var(--primary); font-weight: 600; }
-.status-badge { font-size: 0.7rem; color: var(--success); margin-top: 8px; opacity: 0.8; }
+
+.fixed-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg); display: flex; justify-content: center;
+    align-items: center; z-index: 2000;
+}
+.gender-selection { display: flex; gap: 10px; margin-top: 10px; }
+.gender-btn { background: #1e293b; color: white; border: 1px solid var(--primary); flex: 1; }
+.gender-btn.active { background: var(--primary); color: #020617; }
+
+/* أنيميشن لظهور الاسم */
+@keyframes fadeInGlow {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
