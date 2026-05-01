@@ -3,9 +3,11 @@ let userData = JSON.parse(localStorage.getItem('focusUser')) || null;
 
 window.onload = function() {
     if(!userData) {
-        document.getElementById('welcomeModal').classList.remove('hidden');
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) welcomeModal.classList.remove('hidden');
     } else {
-        document.getElementById('welcomeModal').classList.add('hidden');
+        const welcomeModal = document.getElementById('welcomeModal');
+        if (welcomeModal) welcomeModal.classList.add('hidden');
         applyPersonalization();
     }
 };
@@ -13,11 +15,16 @@ window.onload = function() {
 function setGender(g) {
     const nameInput = document.getElementById('userNameInput');
     const name = nameInput.value.trim();
-    if(!name) { alert("اكتب اسمك الأول يا بطل!"); return; }
+    if(!name) { 
+        alert("اكتب اسمك الأول يا بطل!"); 
+        return; 
+    }
     
     userData = { name: name, gender: g };
     localStorage.setItem('focusUser', JSON.stringify(userData));
-    document.getElementById('welcomeModal').classList.add('hidden');
+    
+    const welcomeModal = document.getElementById('welcomeModal');
+    if (welcomeModal) welcomeModal.classList.add('hidden');
     applyPersonalization();
 }
 
@@ -27,8 +34,8 @@ function applyPersonalization() {
         const glowHeader = document.getElementById('userGlowHeader');
         const nameDisplay = document.getElementById('userDisplayName');
         
-        glowHeader.classList.remove('hidden');
-        nameDisplay.textContent = userData.name;
+        if (glowHeader) glowHeader.classList.remove('hidden');
+        if (nameDisplay) nameDisplay.textContent = userData.name;
 
         // تخصيص جملة الإعداد بناءً على النوع
         const setupTitle = document.getElementById('setupTitle');
@@ -40,6 +47,7 @@ function applyPersonalization() {
 
 // دالة تعديل الاسم عند الضغط عليه
 function editUserName() {
+    if (!userData) return;
     const newName = prompt("اكتب اسمك الجديد:", userData.name);
     if (newName && newName.trim() !== "") {
         userData.name = newName.trim();
@@ -84,7 +92,7 @@ const quotes = [
     "ليوناردو دا فينشي: الحديد يصدأ من الإهمال، والماء يفقد نقاءه من الركود.",
     "والت ديزني: إذا كنت تستطيع حلمه، يمكنك فعله.",
     "مالكوم إكس: المستقبل ينتمي لأولئك الذين يستعدون له اليوم.",
-    "فيلم Spider-Man: مع القوة العظيمة، تأتي مسؤولية عظيمة.",
+    "فيلم Spider-Man: مع القوة العظيمة, تأتي مسؤولية عظيمة.",
     "مايكل جوردن: لقد فشلت مراراً وتكراراً في حياتي، وهذا هو سبب نجاحي.",
     "عمر المختار: نحن لا نستسلم.. ننتصر أو نموت.",
     "ابن تيمية: ما يصنع أعدائي بي؟ أنا جنتي وبستاني في صدري.",
@@ -117,7 +125,7 @@ const quotes = [
     "فيلم Creed: أنت أصعب خصم ستواجهه في المرآة.",
     "فيكتور هوجو: العمل يبعد عنا ثلاث شرور: السأم، والرذيلة، والحاجة.",
     "تشارلي تشابلن: يوم بدون ضحك هو يوم ضائع.",
-    "فيلم Cast Away: غداً ستشرق الشمس، ومن يعرف ماذا قد يأتي به المد? ",
+    "فيلم Cast Away: غداً ستشرق الشمس، ومن يعرف ماذا قد يأتي به المد؟",
     "عروة بن الورد: إني امرؤ عافي إنائي شركة.. وأنت امرؤ عافي إنائك واحد.",
     "الحسن البصري: يا ابن آدم، إنما أنت أيام، فإذا ذهب يوم ذهب بعضك.",
     "أحمد زويل: الغرب يدعمون الفاشل حتى ينجح، ونحن نحارب الناجح حتى يفشل.",
@@ -160,19 +168,26 @@ const core = {
             if ('wakeLock' in navigator) {
                 this.wakeLock = await navigator.wakeLock.request('screen');
             }
-        } catch (err) {}
+        } catch (err) {
+            console.warn("WakeLock request failed");
+        }
     },
 
     releaseWakeLock() {
-        if (this.wakeLock) { this.wakeLock.release(); this.wakeLock = null; }
+        if (this.wakeLock) { 
+            this.wakeLock.release(); 
+            this.wakeLock = null; 
+        }
     },
 
     add() {
         const name = document.getElementById('tName').value.trim();
         const h = parseInt(document.getElementById('tH').value) || 0;
         const m = parseInt(document.getElementById('tM').value) || 0;
+        
         if(!name || (h===0 && m===0)) return;
-        this.list.push({ name, sec: (h*3600) + (m*60) });
+        
+        this.list.push({ name, sec: (h * 3600) + (m * 60) });
         
         document.getElementById('tName').value = '';
         document.getElementById('tH').value = '';
@@ -186,26 +201,36 @@ const core = {
         const countDiv = document.getElementById('countDisplay');
         const startBtn = document.getElementById('startBtn');
         if (count > 0) {
-            countDiv.classList.remove('hidden');
-            countDiv.textContent = `عدد المهام المضافة حتى الآن: ${count}`;
-            startBtn.classList.remove('hidden');
+            if (countDiv) {
+                countDiv.classList.remove('hidden');
+                countDiv.textContent = `عدد المهام المضافة حتى الآن: ${count}`;
+            }
+            if (startBtn) startBtn.classList.remove('hidden');
         }
     },
 
     begin() {
-        document.getElementById('setupView').classList.add('hidden');
-        document.getElementById('focusView').classList.remove('hidden');
+        const setupView = document.getElementById('setupView');
+        const focusView = document.getElementById('focusView');
+        if (setupView) setupView.classList.add('hidden');
+        if (focusView) focusView.classList.remove('hidden');
         this.requestWakeLock();
         this.load();
     },
 
     load() {
+        if (this.list.length === 0) return;
         const current = this.list[0];
-        document.getElementById('activeTask').textContent = current.name;
+        const activeTask = document.getElementById('activeTask');
+        if (activeTask) activeTask.textContent = current.name;
+        
         this.left = current.sec;
         this.paused = false;
+        
         const next = this.list[1];
-        document.getElementById('nextTaskName').textContent = next ? next.name : "لا توجد مهام قادمة";
+        const nextTaskName = document.getElementById('nextTaskName');
+        if (nextTaskName) nextTaskName.textContent = next ? next.name : "لا توجد مهام قادمة";
+        
         this.updateDisp();
         this.start();
     },
@@ -214,8 +239,12 @@ const core = {
         clearInterval(this.timer);
         this.timer = setInterval(() => {
             if(!this.paused) {
-                if(this.left > 0) { this.left--; this.updateDisp(); }
-                else { this.finishOne(); }
+                if(this.left > 0) { 
+                    this.left--; 
+                    this.updateDisp(); 
+                } else { 
+                    this.finishOne(); 
+                }
             }
         }, 1000);
     },
@@ -224,19 +253,28 @@ const core = {
         const h = Math.floor(this.left / 3600);
         const m = Math.floor((this.left % 3600) / 60);
         const s = this.left % 60;
-        document.getElementById('disp').textContent = 
-            `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        const disp = document.getElementById('disp');
+        if (disp) {
+            disp.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
     },
 
     toggle() {
         this.paused = !this.paused;
         const b = document.getElementById('pBtn');
-        b.textContent = this.paused ? "استئناف" : "إيقاف مؤقت";
-        b.style.background = this.paused ? "var(--success)" : "#334155";
+        if (b) {
+            b.textContent = this.paused ? "استئناف" : "إيقاف مؤقت";
+            b.style.background = this.paused ? "var(--success)" : "#334155";
+        }
         if(this.paused) this.releaseWakeLock(); else this.requestWakeLock();
     },
 
-    reset() { this.left = this.list[0].sec; this.updateDisp(); },
+    reset() { 
+        if (this.list.length > 0) {
+            this.left = this.list[0].sec; 
+            this.updateDisp(); 
+        }
+    },
 
     finishOne() {
         clearInterval(this.timer);
@@ -252,22 +290,37 @@ const core = {
 
     showMotivation() {
         const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        document.getElementById('quoteArea').textContent = randomQuote;
-        document.getElementById('motivationalModal').classList.remove('hidden');
+        const quoteArea = document.getElementById('quoteArea');
+        const motivationalModal = document.getElementById('motivationalModal');
+        
+        if (quoteArea) quoteArea.textContent = randomQuote;
+        if (motivationalModal) motivationalModal.classList.remove('hidden');
     },
 
     showFinalMessage() {
         const name = userData ? userData.name : "";
-        document.getElementById('modalEmoji').textContent = "🏆";
-        document.getElementById('quoteArea').innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!`;
-        document.getElementById('modalBtn').textContent = "إغلاق وبدء يوم جديد";
-        document.getElementById('motivationalModal').classList.remove('hidden');
+        const modalEmoji = document.getElementById('modalEmoji');
+        const quoteArea = document.getElementById('quoteArea');
+        const modalBtn = document.getElementById('modalBtn');
+        const motivationalModal = document.getElementById('motivationalModal');
+
+        if (modalEmoji) modalEmoji.textContent = "🏆";
+        if (quoteArea) {
+            quoteArea.innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!`;
+        }
+        if (modalBtn) modalBtn.textContent = "إغلاق وبدء يوم جديد";
+        if (motivationalModal) motivationalModal.classList.remove('hidden');
     },
 
     closeModal() {
-        document.getElementById('motivationalModal').classList.add('hidden');
-        if(this.allDone) { location.reload(); }
-        else if(this.list.length > 0) { this.load(); }
+        const motivationalModal = document.getElementById('motivationalModal');
+        if (motivationalModal) motivationalModal.classList.add('hidden');
+        
+        if(this.allDone) { 
+            location.reload(); 
+        } else if(this.list.length > 0) { 
+            this.load(); 
+        }
     }
 };
 
