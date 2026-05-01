@@ -1,3 +1,53 @@
+// نظام حفظ البيانات والترحيب
+let userData = JSON.parse(localStorage.getItem('focusUser')) || null;
+
+window.onload = function() {
+    if(!userData) {
+        document.getElementById('welcomeModal').classList.remove('hidden');
+    } else {
+        document.getElementById('welcomeModal').classList.add('hidden');
+        applyPersonalization();
+    }
+};
+
+function setGender(g) {
+    const nameInput = document.getElementById('userNameInput');
+    const name = nameInput.value.trim();
+    if(!name) { alert("اكتب اسمك الأول يا بطل!"); return; }
+    
+    userData = { name: name, gender: g };
+    localStorage.setItem('focusUser', JSON.stringify(userData));
+    document.getElementById('welcomeModal').classList.add('hidden');
+    applyPersonalization();
+}
+
+function applyPersonalization() {
+    if(userData) {
+        // إظهار الاسم المضيء فوق الإطار
+        const glowHeader = document.getElementById('userGlowHeader');
+        const nameDisplay = document.getElementById('userDisplayName');
+        
+        glowHeader.classList.remove('hidden');
+        nameDisplay.textContent = userData.name;
+
+        // تخصيص جملة الإعداد بناءً على النوع
+        const setupTitle = document.getElementById('setupTitle');
+        if(setupTitle) {
+            setupTitle.textContent = userData.gender === 'male' ? "إعداد المهمة يا بطل" : "إعداد المهمة يا بطلة";
+        }
+    }
+}
+
+// دالة تعديل الاسم عند الضغط عليه
+function editUserName() {
+    const newName = prompt("اكتب اسمك الجديد:", userData.name);
+    if (newName && newName.trim() !== "") {
+        userData.name = newName.trim();
+        localStorage.setItem('focusUser', JSON.stringify(userData));
+        applyPersonalization();
+    }
+}
+
 const quotes = [
     "خالد بن الوليد: ما ليلة أُهديت إليّ فيها عروس.. أحب إليّ من ليلة شديدة البرد أصبّح فيها العدو.",
     "عمر بن الخطاب: لا تصغرنّ همتكم، فإني لم أرَ أقعد عن المكرمات من صغر الهمم.",
@@ -109,11 +159,8 @@ const core = {
         try {
             if ('wakeLock' in navigator) {
                 this.wakeLock = await navigator.wakeLock.request('screen');
-                console.log("Wake Lock active"); 
             }
-        } catch (err) {
-            console.log("Wake Lock failed");
-        }
+        } catch (err) {}
     },
 
     releaseWakeLock() {
@@ -127,7 +174,6 @@ const core = {
         if(!name || (h===0 && m===0)) return;
         this.list.push({ name, sec: (h*3600) + (m*60) });
         
-        // تصفير الخانات تماماً
         document.getElementById('tName').value = '';
         document.getElementById('tH').value = '';
         document.getElementById('tM').value = '';
@@ -186,7 +232,6 @@ const core = {
         this.paused = !this.paused;
         const b = document.getElementById('pBtn');
         b.textContent = this.paused ? "استئناف" : "إيقاف مؤقت";
-        // تغيير اللون للأخضر عند التوقف
         b.style.background = this.paused ? "var(--success)" : "#334155";
         if(this.paused) this.releaseWakeLock(); else this.requestWakeLock();
     },
@@ -212,8 +257,9 @@ const core = {
     },
 
     showFinalMessage() {
+        const name = userData ? userData.name : "";
         document.getElementById('modalEmoji').textContent = "🏆";
-        document.getElementById('quoteArea').innerHTML = "رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!";
+        document.getElementById('quoteArea').innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!`;
         document.getElementById('modalBtn').textContent = "إغلاق وبدء يوم جديد";
         document.getElementById('motivationalModal').classList.remove('hidden');
     },
