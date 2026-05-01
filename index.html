@@ -11,8 +11,7 @@
     gtag('config', 'G-584VY84B6Y');
   </script>
   
-  <!-- باقي أكواد الـ head الخاصة بك -->
-<link rel="icon" href="h.png" type="image/png">
+  <link rel="icon" href="h.png" type="image/png">
     <link rel="apple-touch-icon" href="h.png">
 
     <meta property="og:image" content="https://abdelraouf-harpy.github.io/focus/h.png">
@@ -30,10 +29,28 @@
 </head>
 <body>
 
+<!-- واجهة الترحيب لأول مرة -->
+<div id="welcomeModal" class="fixed-modal hidden">
+    <div class="modal-content">
+        <h2>أهلاً بك في Focus</h2>
+        <p>عشان نخصص لك التجربة، قولي اسمك ونوعك:</p>
+        <input type="text" id="userNameInput" class="input-field" placeholder="اسمك إيه؟" style="margin-bottom: 15px;">
+        <div class="gender-selection">
+            <button class="gender-btn" onclick="setGender('male')">ولد </button>
+            <button class="gender-btn" onclick="setGender('female')">بنت </button>
+        </div>
+    </div>
+</div>
+
 <div class="container">
+    <!-- إضافة الاسم المضيء هنا فوق الكارت -->
+    <div id="userGlowHeader" class="user-glow-container hidden">
+        <span id="userDisplayName"></span>
+    </div>
+
     <!-- واجهة الإعداد -->
     <div id="setupView" class="card">
-        <h2>إعداد المهمة</h2>
+        <h2 id="setupTitle">إعداد المهمة</h2>
         <div class="input-group">
             <label>اسم المهمة</label>
             <input type="text" id="tName" class="input-field" placeholder="" autocomplete="off">
@@ -62,8 +79,6 @@
             <button class="btn-ctrl" onclick="core.reset()">إعادة</button>
         </div>
         <button class="btn-finish" onclick="core.finishOne()">إنهاء المهمة الحالية</button>
-        
-        <!-- تم حذف جملة الحماية من هنا مع بقاء الوظيفة في الـ JS -->
         
         <div id="nextTaskContainer" class="next-task-box">
             المهمة التالية:
