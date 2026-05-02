@@ -12,6 +12,7 @@ window.onload = function() {
     }
 };
 
+// دالة تحديد النوع وحفظ البيانات (تستخدم عند التسجيل أو التعديل)
 function setGender(g) {
     const nameInput = document.getElementById('userNameInput');
     const name = nameInput.value.trim();
@@ -42,19 +43,30 @@ function applyPersonalization() {
         if(setupTitle) {
             setupTitle.textContent = userData.gender === 'male' ? "إعداد المهمة يا بطل" : "إعداد المهمة يا بطلة";
         }
+
+        // تحديث قيمة الحقل في النافذة المنبثقة ليكون جاهزاً للتعديل دائماً
+        const nameInput = document.getElementById('userNameInput');
+        if (nameInput) nameInput.value = userData.name;
     }
 }
 
-// دالة تعديل الاسم عند الضغط عليه
-function editUserName() {
+// تم استبدال دالة editUserName القديمة لتعمل مع واجهتك المصممة في HTML
+function openEditProfile() {
     if (!userData) return;
-    const newName = prompt("اكتب اسمك الجديد:", userData.name);
-    if (newName && newName.trim() !== "") {
-        userData.name = newName.trim();
-        localStorage.setItem('focusUser', JSON.stringify(userData));
-        applyPersonalization();
-    }
+    const welcomeModal = document.getElementById('welcomeModal');
+    const nameInput = document.getElementById('userNameInput');
+    
+    if (nameInput) nameInput.value = userData.name;
+    if (welcomeModal) welcomeModal.classList.remove('hidden');
 }
+
+// إعداد زر الاسم المضيء لفتح الواجهة (تم الربط برمجياً للتأكيد)
+document.addEventListener('DOMContentLoaded', () => {
+    const nameDisplay = document.getElementById('userDisplayName');
+    if (nameDisplay) {
+        nameDisplay.onclick = openEditProfile;
+    }
+});
 
 const quotes = [
     "خالد بن الوليد: ما ليلة أُهديت إليّ فيها عروس.. أحب إليّ من ليلة شديدة البرد أصبّح فيها العدو.",
