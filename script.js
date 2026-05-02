@@ -34,7 +34,7 @@ function setGender(g) {
 // دالة ربط هوية المستخدم بـ Google Analytics (User-ID)
 function syncUserWithAnalytics() {
     if (userData && userData.name && typeof gtag === 'function') {
-        gtag('config', 'G-W7T3R6Y5Q5', {
+        gtag('config', 'G-584VY84B6Y', {
             'user_id': userData.name 
         });
         console.log("Analytics ID Linked: " + userData.name);
