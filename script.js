@@ -9,6 +9,7 @@ window.onload = function() {
         const welcomeModal = document.getElementById('welcomeModal');
         if (welcomeModal) welcomeModal.classList.add('hidden');
         applyPersonalization();
+        syncUserWithAnalytics(); // ربط المعرف عند تحميل الصفحة إذا كان المستخدم مسجلاً
     }
 };
 
@@ -27,6 +28,17 @@ function setGender(g) {
     const welcomeModal = document.getElementById('welcomeModal');
     if (welcomeModal) welcomeModal.classList.add('hidden');
     applyPersonalization();
+    syncUserWithAnalytics(); // ربط المعرف فور التسجيل أو التعديل
+}
+
+// دالة ربط هوية المستخدم بـ Google Analytics (User-ID)
+function syncUserWithAnalytics() {
+    if (userData && userData.name && typeof gtag === 'function') {
+        gtag('config', 'G-W7T3R6Y5Q5', {
+            'user_id': userData.name 
+        });
+        console.log("Analytics ID Linked: " + userData.name);
+    }
 }
 
 function applyPersonalization() {
