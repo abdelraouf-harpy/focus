@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-584VY84B6Y"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -29,7 +28,6 @@
 </head>
 <body>
 
-<!-- واجهة الترحيب لأول مرة -->
 <div id="welcomeModal" class="fixed-modal hidden">
     <div class="modal-content">
         <h2>أهلاً بك في Focus</h2>
@@ -42,12 +40,10 @@
 </div>
 
 <div class="container">
-    <!-- إضافة الاسم المضيء هنا فوق الكارت - تم تعديله ليفتح الواجهة عند الضغط -->
     <div id="userGlowHeader" class="user-glow-container hidden" onclick="document.getElementById('welcomeModal').classList.remove('hidden')" style="cursor: pointer;">
         <span id="userDisplayName"></span>
     </div>
 
-    <!-- واجهة الإعداد -->
     <div id="setupView" class="card">
         <h2 id="setupTitle">إعداد المهمة</h2>
         <div class="input-group">
@@ -65,11 +61,13 @@
             </div>
         </div>
         <button class="btn-add" onclick="core.add()">إضافة للقائمة</button>
+        
+        <button class="btn-open-timer" onclick="core.startOpenTimer()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 15px;">تايمر حر</button>
+
         <div id="countDisplay" class="task-counter hidden">عدد المهام المضافة حتى الآن: 0</div>
-        <button id="startBtn" class="btn-start hidden" onclick="core.begin()">بدء تنفيذ المهام</button>
+        <button id="startBtn" class="btn-start hidden" onclick="core.begin()">بدء تنفيذ المهام المضافة</button>
     </div>
 
-    <!-- واجهة التركيز -->
     <div id="focusView" class="card hidden">
         <div id="activeTask" style="color:var(--primary); font-weight:700; font-size: 1.2rem;">-</div>
         <div class="timer-display" id="disp">00:00:00</div>
@@ -77,7 +75,7 @@
             <button id="pBtn" class="btn-ctrl" onclick="core.toggle()">إيقاف مؤقت</button>
             <button class="btn-ctrl" onclick="core.reset()">إعادة</button>
         </div>
-        <button class="btn-finish" onclick="core.finishOne()">إنهاء المهمة الحالية</button>
+        <button class="btn-finish" onclick="core.finishOne()">إنهاء الجلسة</button>
         
         <div id="nextTaskContainer" class="next-task-box">
             المهمة التالية:
@@ -85,7 +83,6 @@
         </div>
     </div>
 
-    <!-- مودال الجمل التحفيزية -->
     <div id="motivationalModal" class="hidden">
         <div class="modal-content">
             <div id="modalEmoji" style="font-size: 2.5rem; margin-bottom: 10px;">🌟</div>
