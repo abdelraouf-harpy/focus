@@ -34,51 +34,25 @@ function setGender(g) {
 // دالة ربط هوية المستخدم بـ Google Analytics (User-ID)
 function syncUserWithAnalytics() {
     if (userData && userData.name && typeof gtag === 'function') {
-        gtag('config', 'G-584VY84B6Y', {
-            'user_id': userData.name 
+        gtag('set', 'user_properties', {
+            'user_name': userData.name,
+            'user_gender': userData.gender
         });
-        console.log("Analytics ID Linked: " + userData.name);
+        gtag('config', 'G-584VY84B6Y', {
+            'user_id': userData.name + '_' + new Date().getTime()
+        });
     }
 }
 
+// تخصيص الواجهة باسم المستخدم
 function applyPersonalization() {
-    if(userData) {
-        // إظهار الاسم المضيء فوق الإطار
-        const glowHeader = document.getElementById('userGlowHeader');
-        const nameDisplay = document.getElementById('userDisplayName');
-        
-        if (glowHeader) glowHeader.classList.remove('hidden');
-        if (nameDisplay) nameDisplay.textContent = userData.name;
-
-        // تخصيص جملة الإعداد بناءً على النوع
-        const setupTitle = document.getElementById('setupTitle');
-        if(setupTitle) {
-            setupTitle.textContent = userData.gender === 'male' ? "إعداد المهمة يا بطل" : "إعداد المهمة يا بطلة";
-        }
-
-        // تحديث قيمة الحقل في النافذة المنبثقة ليكون جاهزاً للتعديل دائماً
-        const nameInput = document.getElementById('userNameInput');
-        if (nameInput) nameInput.value = userData.name;
+    const display = document.getElementById('userDisplayName');
+    const header = document.getElementById('userGlowHeader');
+    if(userData && display && header) {
+        display.textContent = userData.name;
+        header.classList.remove('hidden');
     }
 }
-
-// تم استبدال دالة editUserName القديمة لتعمل مع واجهتك المصممة في HTML
-function openEditProfile() {
-    if (!userData) return;
-    const welcomeModal = document.getElementById('welcomeModal');
-    const nameInput = document.getElementById('userNameInput');
-    
-    if (nameInput) nameInput.value = userData.name;
-    if (welcomeModal) welcomeModal.classList.remove('hidden');
-}
-
-// إعداد زر الاسم المضيء لفتح الواجهة (تم الربط برمجياً للتأكيد)
-document.addEventListener('DOMContentLoaded', () => {
-    const nameDisplay = document.getElementById('userDisplayName');
-    if (nameDisplay) {
-        nameDisplay.onclick = openEditProfile;
-    }
-});
 
 const quotes = [
     "خالد بن الوليد: ما ليلة أُهديت إليّ فيها عروس.. أحب إليّ من ليلة شديدة البرد أصبّح فيها العدو.",
@@ -93,7 +67,7 @@ const quotes = [
     "ستيف جوبز: وقتك محدود، فلا تضيعه في عيش حياة شخص آخر.",
     "محمد علي كلاي: كرهت كل دقيقة من التدريب، ولكن قلت: لا تستسلم، عانِ الآن وعش بقية حياتك كبطل.",
     "ونستون تشرشل: النجاح هو الانتقال من فشل إلى فشل دون فقدان الحماس.",
-    "طارق بن زياد: العدو من أمامكم والبحر من ورائكم.. ليس لكم والله إلا الصدق والصبر.",
+    "طارق بن زياد: العدو من أمامكم والبحر من ورائكم.. ليس لكم والله إلا الصصدق والصبر.",
     "عمر بن عبد العزيز: إن لي نفساً تواقة، كلما وصلت لشيء تاقت لما هو أعظم منه.",
     "ابن القيم: لو علم المتصدق أن صدقته تقع في يد الله قبل يد الفقير، لكانت لذة المعطي أكبر من لذة الآخذ.",
     "جلال الدين الرومي: لا تحزن، فكل ما تفقده يعود إليك في شكل آخر.",
@@ -186,6 +160,7 @@ const quotes = [
 const core = {
     list: [], timer: null, left: 0, paused: false, allDone: false,
     wakeLock: null,
+    isOpenTimer: false, // تم الحفاظ على متغير حالة التايمر الحر
 
     async requestWakeLock() {
         try {
@@ -233,11 +208,44 @@ const core = {
         }
     },
 
-    begin() {
+    // دالة بدء التايمر الحر (معدلة لإخفاء النصوص)
+    startOpenTimer() {
+        this.isOpenTimer = true;
+        this.left = 0;
         const setupView = document.getElementById('setupView');
         const focusView = document.getElementById('focusView');
+        const activeTask = document.getElementById('activeTask');
+        const nextTaskContainer = document.getElementById('nextTaskContainer');
+
         if (setupView) setupView.classList.add('hidden');
         if (focusView) focusView.classList.remove('hidden');
+        
+        // إخفاء النصوص المحيطة بالتايمر لضمان الهدوء البصري
+        if (activeTask) {
+            activeTask.textContent = ""; 
+            activeTask.classList.add('hidden');
+        }
+        if (nextTaskContainer) nextTaskContainer.classList.add('hidden');
+
+        this.requestWakeLock();
+        this.updateDisp();
+        this.start();
+    },
+
+    begin() {
+        this.isOpenTimer = false;
+        const setupView = document.getElementById('setupView');
+        const focusView = document.getElementById('focusView');
+        const activeTask = document.getElementById('activeTask');
+        const nextTaskContainer = document.getElementById('nextTaskContainer');
+
+        if (setupView) setupView.classList.add('hidden');
+        if (focusView) focusView.classList.remove('hidden');
+        
+        // إعادة إظهار النصوص في وضع المهام العادية
+        if (activeTask) activeTask.classList.remove('hidden');
+        if (nextTaskContainer) nextTaskContainer.classList.remove('hidden');
+
         this.requestWakeLock();
         this.load();
     },
@@ -263,11 +271,16 @@ const core = {
         clearInterval(this.timer);
         this.timer = setInterval(() => {
             if(!this.paused) {
-                if(this.left > 0) { 
-                    this.left--; 
-                    this.updateDisp(); 
-                } else { 
-                    this.finishOne(); 
+                if (this.isOpenTimer) {
+                    this.left++; // عد تصاعدي في الوضع الحر
+                    this.updateDisp();
+                } else {
+                    if(this.left > 0) { 
+                        this.left--; 
+                        this.updateDisp(); 
+                    } else { 
+                        this.finishOne(); 
+                    }
                 }
             }
         }, 1000);
@@ -294,21 +307,29 @@ const core = {
     },
 
     reset() { 
-        if (this.list.length > 0) {
+        if (this.isOpenTimer) {
+            this.left = 0;
+        } else if (this.list.length > 0) {
             this.left = this.list[0].sec; 
-            this.updateDisp(); 
         }
+        this.updateDisp();
     },
 
     finishOne() {
         clearInterval(this.timer);
-        this.list.shift();
-        if(this.list.length === 0) {
+        if (this.isOpenTimer) {
             this.allDone = true;
             this.releaseWakeLock();
             this.showFinalMessage();
         } else {
-            this.showMotivation();
+            this.list.shift();
+            if(this.list.length === 0) {
+                this.allDone = true;
+                this.releaseWakeLock();
+                this.showFinalMessage();
+            } else {
+                this.showMotivation();
+            }
         }
     },
 
@@ -330,7 +351,13 @@ const core = {
 
         if (modalEmoji) modalEmoji.textContent = "🏆";
         if (quoteArea) {
-            quoteArea.innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!`;
+            if (this.isOpenTimer) {
+                const h = Math.floor(this.left / 3600);
+                const m = Math.floor((this.left % 3600) / 60);
+                quoteArea.innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد قضيت ${h} ساعة و ${m} دقيقة من التركيز العميق يا ${name}!<br>الإنجاز ليس بالوقت بل بالاستمرارية. فخور بك!`;
+            } else {
+                quoteArea.innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!`;
+            }
         }
         if (modalBtn) modalBtn.textContent = "إغلاق وبدء يوم جديد";
         if (motivationalModal) motivationalModal.classList.remove('hidden');
