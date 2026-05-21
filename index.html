@@ -6,94 +6,150 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-584VY84B6Y');
   </script>
   
   <link rel="icon" href="h.png" type="image/png">
-    <link rel="apple-touch-icon" href="h.png">
-
-    <meta property="og:image" content="https://abdelraouf-harpy.github.io/focus/h.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Focus</title>
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#020617">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="h.png">
+  <meta property="og:image" content="https://abdelraouf-harpy.github.io/focus/h.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Focus | تركيز</title>
+  
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#09090b">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="welcomeModal" class="fixed-modal hidden">
-    <div class="modal-content">
+  <!-- Background Animated Elements -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <!-- Welcome Modal (using native dialog or overlay) -->
+  <div id="welcomeModal" class="overlay hidden">
+    <div class="glass-panel modal-panel">
+      <div class="modal-header">
+        <i class="fa-solid fa-rocket modal-icon"></i>
         <h2>أهلاً بك في Focus</h2>
-        <input type="text" id="userNameInput" class="input-field" placeholder="اسمك إيه؟" style="margin-bottom: 15px;">
+        <p>التطبيق الأمثل لزيادة إنتاجيتك</p>
+      </div>
+      <div class="modal-body">
+        <input type="text" id="userNameInput" class="glass-input" placeholder="ما اسمك؟" autocomplete="off">
         <div class="gender-selection">
-            <button class="gender-btn" onclick="setGender('male')">ولد </button>
-            <button class="gender-btn" onclick="setGender('female')">بنت </button>
+          <button class="glass-btn btn-gender" onclick="setGender('male')">
+            <i class="fa-solid fa-mars"></i> ولد
+          </button>
+          <button class="glass-btn btn-gender" onclick="setGender('female')">
+            <i class="fa-solid fa-venus"></i> بنت
+          </button>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 
-<div class="container">
-    <div id="userGlowHeader" class="user-glow-container hidden" onclick="document.getElementById('welcomeModal').classList.remove('hidden')" style="cursor: pointer;">
-        <span id="userDisplayName"></span>
+  <!-- Motivational Quotes Modal -->
+  <div id="motivationalModal" class="overlay hidden">
+    <div class="glass-panel modal-panel">
+      <div id="modalEmoji" class="modal-emoji">🌟</div>
+      <div id="quoteArea" class="quote-text">أنت بطل!</div>
+      <button id="modalBtn" class="glass-btn btn-primary" onclick="core.closeModal()">
+        استمرار <i class="fa-solid fa-arrow-left"></i>
+      </button>
     </div>
+  </div>
 
-    <div id="setupView" class="card">
-        <h2 id="setupTitle">إعداد المهمة</h2>
+  <main class="app-container">
+    <header class="app-header">
+      <div id="userGlowHeader" class="user-greeting hidden" onclick="document.getElementById('welcomeModal').classList.remove('hidden')" title="تعديل الاسم">
+        مرحباً، <span id="userDisplayName" class="glow-text"></span>
+      </div>
+    </header>
+
+    <!-- Setup View -->
+    <section id="setupView" class="glass-panel card-view">
+      <h2 class="view-title"><i class="fa-solid fa-list-check"></i> إعداد المهام</h2>
+      
+      <div class="input-group">
+        <label>اسم المهمة</label>
+        <input type="text" id="tName" class="glass-input" placeholder="ماذا تريد أن تنجز؟" autocomplete="off">
+      </div>
+      
+      <div class="time-row">
         <div class="input-group">
-            <label>اسم المهمة</label>
-            <input type="text" id="tName" class="input-field" placeholder="" autocomplete="off">
+          <label>ساعات</label>
+          <input type="number" id="tH" class="glass-input text-center" min="0" placeholder="0">
         </div>
-        <div class="time-row">
-            <div class="input-group" style="flex:1">
-                <label>ساعات</label>
-                <input type="number" id="tH" class="input-field" min="0" placeholder="">
-            </div>
-            <div class="input-group" style="flex:1">
-                <label>دقائق</label>
-                <input type="number" id="tM" class="input-field" min="0" max="59" placeholder="">
-            </div>
+        <div class="input-group">
+          <label>دقائق</label>
+          <input type="number" id="tM" class="glass-input text-center" min="0" max="59" placeholder="0">
         </div>
-        <button class="btn-add" onclick="core.add()">إضافة للقائمة</button>
-        
-        <button class="btn-open-timer" onclick="core.startOpenTimer()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary); margin-top: 15px;">timer</button>
+      </div>
+      
+      <div class="action-row">
+        <button class="glass-btn btn-primary" onclick="core.add()">
+          <i class="fa-solid fa-plus"></i> إضافة للمهمات
+        </button>
+        <button class="glass-btn btn-icon outline" onclick="core.startOpenTimer()" title="مؤقت حر">
+          <i class="fa-solid fa-stopwatch"></i>
+        </button>
+      </div>
 
-        <div id="countDisplay" class="task-counter hidden">عدد المهام المضافة حتى الآن: 0</div>
-        <button id="startBtn" class="btn-start hidden" onclick="core.begin()">بدء تنفيذ المهام المضافة</button>
-    </div>
+      <div id="tasksListContainer" class="tasks-list-container hidden">
+        <h3 class="list-title">المهام المضافة:</h3>
+        <ul id="tasksList" class="tasks-list"></ul>
+      </div>
 
-    <div id="focusView" class="card hidden">
-        <div id="activeTask" style="color:var(--primary); font-weight:700; font-size: 1.2rem;">-</div>
+      <button id="startBtn" class="glass-btn btn-success hidden" onclick="core.begin()">
+        <i class="fa-solid fa-play"></i> بدء التركيز
+      </button>
+    </section>
+
+    <!-- Focus View -->
+    <section id="focusView" class="glass-panel card-view hidden">
+      <div class="task-info">
+        <div class="active-badge">جارِ التنفيذ</div>
+        <h2 id="activeTask" class="active-task-name">-</h2>
+      </div>
+
+      <div class="timer-container">
+        <!-- SVG Progress Circle could be added here later -->
         <div class="timer-display" id="disp">00:00:00</div>
-        <div style="display:flex; gap:10px;">
-            <button id="pBtn" class="btn-ctrl" onclick="core.toggle()">إيقاف مؤقت</button>
-            <button class="btn-ctrl" onclick="core.reset()">إعادة</button>
-        </div>
-        <button class="btn-finish" onclick="core.finishOne()">إنهاء الجلسة</button>
-        
-        <div id="nextTaskContainer" class="next-task-box">
-            المهمة التالية:
-            <span id="nextTaskName">-</span>
-        </div>
-    </div>
+      </div>
+      
+      <div class="controls-row">
+        <button id="pBtn" class="glass-btn btn-warning" onclick="core.toggle()">
+          <i class="fa-solid fa-pause"></i> إيقاف مؤقت
+        </button>
+        <button class="glass-btn btn-secondary" onclick="core.reset()">
+          <i class="fa-solid fa-rotate-left"></i> إعادة
+        </button>
+      </div>
+      
+      <button class="glass-btn btn-danger" onclick="core.finishOne()">
+        <i class="fa-solid fa-check-double"></i> إنهاء الجلسة
+      </button>
+      
+      <div id="nextTaskContainer" class="next-task-box">
+        <span class="next-label">المهمة التالية:</span>
+        <span id="nextTaskName" class="next-name">-</span>
+      </div>
+    </section>
 
-    <div id="motivationalModal" class="hidden">
-        <div class="modal-content">
-            <div id="modalEmoji" style="font-size: 2.5rem; margin-bottom: 10px;">🌟</div>
-            <div id="quoteArea" class="quote-text">أنت بطل!</div>
-            <button id="modalBtn" class="btn-add" onclick="core.closeModal()">استمرار</button>
-        </div>
-    </div>
+    <footer class="app-footer">
+      Developed by <a href="https://www.facebook.com/share/1epCcKiKJo/" target="_blank" class="glow-text">Harpy</a>
+    </footer>
+  </main>
 
-    <div class="signature">Developed by <a href="https://www.facebook.com/share/1epCcKiKJo/" target="_blank">Harpy</a></div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

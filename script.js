@@ -1,19 +1,16 @@
-// نظام حفظ البيانات والترحيب
+// === Data & Storage ===
 let userData = JSON.parse(localStorage.getItem('focusUser')) || null;
 
 window.onload = function() {
     if(!userData) {
-        const welcomeModal = document.getElementById('welcomeModal');
-        if (welcomeModal) welcomeModal.classList.remove('hidden');
+        document.getElementById('welcomeModal').classList.remove('hidden');
     } else {
-        const welcomeModal = document.getElementById('welcomeModal');
-        if (welcomeModal) welcomeModal.classList.add('hidden');
+        document.getElementById('welcomeModal').classList.add('hidden');
         applyPersonalization();
-        syncUserWithAnalytics(); // ربط المعرف عند تحميل الصفحة إذا كان المستخدم مسجلاً
+        syncUserWithAnalytics();
     }
 };
 
-// دالة تحديد النوع وحفظ البيانات (تستخدم عند التسجيل أو التعديل)
 function setGender(g) {
     const nameInput = document.getElementById('userNameInput');
     const name = nameInput.value.trim();
@@ -25,13 +22,11 @@ function setGender(g) {
     userData = { name: name, gender: g };
     localStorage.setItem('focusUser', JSON.stringify(userData));
     
-    const welcomeModal = document.getElementById('welcomeModal');
-    if (welcomeModal) welcomeModal.classList.add('hidden');
+    document.getElementById('welcomeModal').classList.add('hidden');
     applyPersonalization();
-    syncUserWithAnalytics(); // ربط المعرف فور التسجيل أو التعديل
+    syncUserWithAnalytics();
 }
 
-// دالة ربط هوية المستخدم بـ Google Analytics (User-ID)
 function syncUserWithAnalytics() {
     if (userData && userData.name && typeof gtag === 'function') {
         gtag('set', 'user_properties', {
@@ -44,7 +39,6 @@ function syncUserWithAnalytics() {
     }
 }
 
-// تخصيص الواجهة باسم المستخدم
 function applyPersonalization() {
     const display = document.getElementById('userDisplayName');
     const header = document.getElementById('userGlowHeader');
@@ -54,6 +48,29 @@ function applyPersonalization() {
     }
 }
 
+// === Audio Notification ===
+function playBeep() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 523.25; // C5 note
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        
+        // Fade out to avoid click
+        gainNode.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 1.5);
+        
+        oscillator.start(audioCtx.currentTime);
+        oscillator.stop(audioCtx.currentTime + 1.5);
+    } catch(e) {
+        console.warn("Audio not supported or blocked", e);
+    }
+}
+
+// === Quotes ===
 const quotes = [
     "خالد بن الوليد: ما ليلة أُهديت إليّ فيها عروس.. أحب إليّ من ليلة شديدة البرد أصبّح فيها العدو.",
     "عمر بن الخطاب: لا تصغرنّ همتكم، فإني لم أرَ أقعد عن المكرمات من صغر الهمم.",
@@ -67,7 +84,7 @@ const quotes = [
     "ستيف جوبز: وقتك محدود، فلا تضيعه في عيش حياة شخص آخر.",
     "محمد علي كلاي: كرهت كل دقيقة من التدريب، ولكن قلت: لا تستسلم، عانِ الآن وعش بقية حياتك كبطل.",
     "ونستون تشرشل: النجاح هو الانتقال من فشل إلى فشل دون فقدان الحماس.",
-    "طارق بن زياد: العدو من أمامكم والبحر من ورائكم.. ليس لكم والله إلا الصصدق والصبر.",
+    "طارق بن زياد: العدو من أمامكم والبحر من ورائكم.. ليس لكم والله إلا الصدق والصبر.",
     "عمر بن عبد العزيز: إن لي نفساً تواقة، كلما وصلت لشيء تاقت لما هو أعظم منه.",
     "ابن القيم: لو علم المتصدق أن صدقته تقع في يد الله قبل يد الفقير، لكانت لذة المعطي أكبر من لذة الآخذ.",
     "جلال الدين الرومي: لا تحزن، فكل ما تفقده يعود إليك في شكل آخر.",
@@ -157,10 +174,11 @@ const quotes = [
     "أنت يا Harpy: التركيز اليوم هو ثمرة النجاح غداً."
 ];
 
+// === Core Logic ===
 const core = {
     list: [], timer: null, left: 0, paused: false, allDone: false,
     wakeLock: null,
-    isOpenTimer: false, // تم الحفاظ على متغير حالة التايمر الحر
+    isOpenTimer: false, 
 
     async requestWakeLock() {
         try {
@@ -168,7 +186,7 @@ const core = {
                 this.wakeLock = await navigator.wakeLock.request('screen');
             }
         } catch (err) {
-            console.warn("WakeLock request failed");
+            console.warn("WakeLock request failed", err);
         }
     },
 
@@ -180,52 +198,75 @@ const core = {
     },
 
     add() {
-        const name = document.getElementById('tName').value.trim();
-        const h = parseInt(document.getElementById('tH').value) || 0;
-        const m = parseInt(document.getElementById('tM').value) || 0;
+        const nameInput = document.getElementById('tName');
+        const hInput = document.getElementById('tH');
+        const mInput = document.getElementById('tM');
         
-        if(!name || (h===0 && m===0)) return;
+        const name = nameInput.value.trim();
+        const h = parseInt(hInput.value) || 0;
+        const m = parseInt(mInput.value) || 0;
         
-        this.list.push({ name, sec: (h * 3600) + (m * 60) });
+        if(!name) { alert("يرجى إدخال اسم المهمة!"); return; }
+        if(h === 0 && m === 0) { alert("يرجى تحديد وقت للمهمة!"); return; }
         
-        document.getElementById('tName').value = '';
-        document.getElementById('tH').value = '';
-        document.getElementById('tM').value = '';
+        this.list.push({ id: Date.now(), name, sec: (h * 3600) + (m * 60) });
+        
+        nameInput.value = '';
+        hInput.value = '';
+        mInput.value = '';
         
         this.updateUI();
     },
 
+    removeTask(id) {
+        this.list = this.list.filter(task => task.id !== id);
+        this.updateUI();
+    },
+
     updateUI() {
-        const count = this.list.length;
-        const countDiv = document.getElementById('countDisplay');
+        const listContainer = document.getElementById('tasksListContainer');
         const startBtn = document.getElementById('startBtn');
-        if (count > 0) {
-            if (countDiv) {
-                countDiv.classList.remove('hidden');
-                countDiv.textContent = `عدد المهام المضافة حتى الآن: ${count}`;
-            }
-            if (startBtn) startBtn.classList.remove('hidden');
+        const ul = document.getElementById('tasksList');
+        
+        ul.innerHTML = '';
+        
+        if (this.list.length > 0) {
+            listContainer.classList.remove('hidden');
+            startBtn.classList.remove('hidden');
+            
+            this.list.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'task-item';
+                
+                const h = Math.floor(task.sec / 3600);
+                const m = Math.floor((task.sec % 3600) / 60);
+                const timeStr = `${h > 0 ? h+'س ' : ''}${m}د`;
+
+                li.innerHTML = `
+                    <span class="task-item-name">${task.name}</span>
+                    <span class="task-item-time"><i class="fa-regular fa-clock"></i> ${timeStr}</span>
+                    <button class="task-item-delete" onclick="core.removeTask(${task.id})" title="حذف">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                `;
+                ul.appendChild(li);
+            });
+        } else {
+            listContainer.classList.add('hidden');
+            startBtn.classList.add('hidden');
         }
     },
 
-    // دالة بدء التايمر الحر (معدلة لإخفاء النصوص)
     startOpenTimer() {
         this.isOpenTimer = true;
         this.left = 0;
-        const setupView = document.getElementById('setupView');
-        const focusView = document.getElementById('focusView');
-        const activeTask = document.getElementById('activeTask');
-        const nextTaskContainer = document.getElementById('nextTaskContainer');
-
-        if (setupView) setupView.classList.add('hidden');
-        if (focusView) focusView.classList.remove('hidden');
         
-        // إخفاء النصوص المحيطة بالتايمر لضمان الهدوء البصري
-        if (activeTask) {
-            activeTask.textContent = ""; 
-            activeTask.classList.add('hidden');
-        }
-        if (nextTaskContainer) nextTaskContainer.classList.add('hidden');
+        document.getElementById('setupView').classList.add('hidden');
+        document.getElementById('focusView').classList.remove('hidden');
+        
+        document.getElementById('activeTask').textContent = "مؤقت حر";
+        document.getElementById('activeTask').parentElement.classList.remove('hidden');
+        document.getElementById('nextTaskContainer').classList.add('hidden');
 
         this.requestWakeLock();
         this.updateDisp();
@@ -234,17 +275,10 @@ const core = {
 
     begin() {
         this.isOpenTimer = false;
-        const setupView = document.getElementById('setupView');
-        const focusView = document.getElementById('focusView');
-        const activeTask = document.getElementById('activeTask');
-        const nextTaskContainer = document.getElementById('nextTaskContainer');
-
-        if (setupView) setupView.classList.add('hidden');
-        if (focusView) focusView.classList.remove('hidden');
         
-        // إعادة إظهار النصوص في وضع المهام العادية
-        if (activeTask) activeTask.classList.remove('hidden');
-        if (nextTaskContainer) nextTaskContainer.classList.remove('hidden');
+        document.getElementById('setupView').classList.add('hidden');
+        document.getElementById('focusView').classList.remove('hidden');
+        document.getElementById('nextTaskContainer').classList.remove('hidden');
 
         this.requestWakeLock();
         this.load();
@@ -253,15 +287,14 @@ const core = {
     load() {
         if (this.list.length === 0) return;
         const current = this.list[0];
-        const activeTask = document.getElementById('activeTask');
-        if (activeTask) activeTask.textContent = current.name;
+        
+        document.getElementById('activeTask').textContent = current.name;
         
         this.left = current.sec;
         this.paused = false;
         
         const next = this.list[1];
-        const nextTaskName = document.getElementById('nextTaskName');
-        if (nextTaskName) nextTaskName.textContent = next ? next.name : "لا توجد مهام قادمة";
+        document.getElementById('nextTaskName').textContent = next ? next.name : "لا توجد مهام إضافية";
         
         this.updateDisp();
         this.start();
@@ -272,13 +305,14 @@ const core = {
         this.timer = setInterval(() => {
             if(!this.paused) {
                 if (this.isOpenTimer) {
-                    this.left++; // عد تصاعدي في الوضع الحر
+                    this.left++; 
                     this.updateDisp();
                 } else {
                     if(this.left > 0) { 
                         this.left--; 
                         this.updateDisp(); 
                     } else { 
+                        playBeep(); // Play sound when timer finishes
                         this.finishOne(); 
                     }
                 }
@@ -290,20 +324,23 @@ const core = {
         const h = Math.floor(this.left / 3600);
         const m = Math.floor((this.left % 3600) / 60);
         const s = this.left % 60;
-        const disp = document.getElementById('disp');
-        if (disp) {
-            disp.textContent = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }
+        
+        document.getElementById('disp').textContent = 
+            `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
     },
 
     toggle() {
         this.paused = !this.paused;
-        const b = document.getElementById('pBtn');
-        if (b) {
-            b.textContent = this.paused ? "استئناف" : "إيقاف مؤقت";
-            b.style.background = this.paused ? "var(--success)" : "#334155";
+        const btn = document.getElementById('pBtn');
+        if(this.paused) {
+            btn.innerHTML = '<i class="fa-solid fa-play"></i> استئناف';
+            btn.className = 'glass-btn btn-success';
+            this.releaseWakeLock();
+        } else {
+            btn.innerHTML = '<i class="fa-solid fa-pause"></i> إيقاف مؤقت';
+            btn.className = 'glass-btn btn-warning';
+            this.requestWakeLock();
         }
-        if(this.paused) this.releaseWakeLock(); else this.requestWakeLock();
     },
 
     reset() { 
@@ -322,7 +359,7 @@ const core = {
             this.releaseWakeLock();
             this.showFinalMessage();
         } else {
-            this.list.shift();
+            this.list.shift(); // Remove current task
             if(this.list.length === 0) {
                 this.allDone = true;
                 this.releaseWakeLock();
@@ -335,38 +372,29 @@ const core = {
 
     showMotivation() {
         const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        const quoteArea = document.getElementById('quoteArea');
-        const motivationalModal = document.getElementById('motivationalModal');
-        
-        if (quoteArea) quoteArea.textContent = randomQuote;
-        if (motivationalModal) motivationalModal.classList.remove('hidden');
+        document.getElementById('quoteArea').textContent = randomQuote;
+        document.getElementById('motivationalModal').classList.remove('hidden');
+        document.getElementById('modalBtn').innerHTML = 'استمرار <i class="fa-solid fa-arrow-left"></i>';
     },
 
     showFinalMessage() {
         const name = userData ? userData.name : "";
-        const modalEmoji = document.getElementById('modalEmoji');
-        const quoteArea = document.getElementById('quoteArea');
-        const modalBtn = document.getElementById('modalBtn');
-        const motivationalModal = document.getElementById('motivationalModal');
-
-        if (modalEmoji) modalEmoji.textContent = "🏆";
-        if (quoteArea) {
-            if (this.isOpenTimer) {
-                const h = Math.floor(this.left / 3600);
-                const m = Math.floor((this.left % 3600) / 60);
-                quoteArea.innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد قضيت ${h} ساعة و ${m} دقيقة من التركيز العميق يا ${name}!<br>الإنجاز ليس بالوقت بل بالاستمرارية. فخور بك!`;
-            } else {
-                quoteArea.innerHTML = `رسالة من <span style='color:var(--primary); font-weight:800;'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء. فخور بك!`;
-            }
+        document.getElementById('modalEmoji').textContent = "🏆";
+        
+        if (this.isOpenTimer) {
+            const h = Math.floor(this.left / 3600);
+            const m = Math.floor((this.left % 3600) / 60);
+            document.getElementById('quoteArea').innerHTML = `رسالة من <span style='color:var(--primary);'>Harpy</span>:<br><br>لقد قضيت ${h} س و ${m} د من التركيز العميق يا ${name}!<br>الإنجاز ليس بالوقت بل بالاستمرارية.`;
+        } else {
+            document.getElementById('quoteArea').innerHTML = `رسالة من <span style='color:var(--primary);'>Harpy</span>:<br><br>لقد أتممت جميع مهامك بنجاح باهر يا ${name}! أنت الآن شخص أفضل مما كنت عليه قبل البدء.`;
         }
-        if (modalBtn) modalBtn.textContent = "إغلاق وبدء يوم جديد";
-        if (motivationalModal) motivationalModal.classList.remove('hidden');
+        
+        document.getElementById('modalBtn').innerHTML = 'إغلاق <i class="fa-solid fa-check"></i>';
+        document.getElementById('motivationalModal').classList.remove('hidden');
     },
 
     closeModal() {
-        const motivationalModal = document.getElementById('motivationalModal');
-        if (motivationalModal) motivationalModal.classList.add('hidden');
-        
+        document.getElementById('motivationalModal').classList.add('hidden');
         if(this.allDone) { 
             location.reload(); 
         } else if(this.list.length > 0) { 
